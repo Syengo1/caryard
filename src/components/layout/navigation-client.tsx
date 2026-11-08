@@ -39,9 +39,8 @@ export function TopNavUI({ staff }: NavProps) {
   const links = isAdminRoute ? adminLinks : publicLinks
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm transition-all duration-300">
-      {/* ADDED 'relative' to the container to anchor the absolute-centered nav */}
-      <div className="container relative flex h-16 sm:h-[4.5rem] items-center justify-between mx-auto max-w-7xl px-4 md:px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background transition-colors duration-200">
+      <div className="container relative flex h-16 items-center justify-between mx-auto max-w-7xl px-4 md:px-8">
         
         {/* Left Side: Brand / Logo */}
         <div className="flex items-center z-10">

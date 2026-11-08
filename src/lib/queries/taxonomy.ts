@@ -1,14 +1,27 @@
+// src/lib/queries/taxonomy.ts
 import { createClient } from '@/lib/supabase/server'
 
 export async function getTaxonomyData() {
   const supabase = await createClient()
 
   const [makesRes, modelsRes, categoriesRes, showroomsRes] = await Promise.all([
-    supabase.from('makes').select('id, name, slug').order('display_order', { ascending: true }),
-    supabase.from('models').select('id, make_id, name, slug, default_body_type').order('name', { ascending: true }),
-    // FIXED: Added 'description' to the select query
-    supabase.from('categories').select('id, name, slug, description').eq('is_active', true).order('display_order', { ascending: true }),
-    supabase.from('showrooms').select('id, name, city').eq('is_active', true)
+    supabase
+      .from('makes')
+      .select('id, name, slug, logo_url, is_popular')
+      .order('display_order', { ascending: true }),
+    supabase
+      .from('models')
+      .select('id, make_id, name, slug, default_body_type')
+      .order('name', { ascending: true }),
+    supabase
+      .from('categories')
+      .select('id, name, slug, description')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true }),
+    supabase
+      .from('showrooms')
+      .select('id, name, city')
+      .eq('is_active', true),
   ])
 
   if (makesRes.error) throw new Error(`Makes error: ${makesRes.error.message}`)

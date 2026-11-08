@@ -283,40 +283,45 @@ export function HeroSearch({
   const showDropdown = isSearchFocused && searchQuery.trim().length > 0
 
   return (
-    // 1. INCREASED WHOLE BLOCK SIZE: max-w-7xl, p-6 sm:p-8, larger border radius
-    <div className="w-full max-w-7xl mx-auto rounded-[0.5rem] sm:rounded-[1rem] bg-background/80 backdrop-blur-xl border border-border/50 shadow-2xl p-1 sm:p-2 transition-all duration-300">
-      
-      {/* 2. INCREASED SEARCH BAR HEIGHT & TEXT SIZE */}
+    <div className="w-full mx-auto rounded-xl bg-card/95 backdrop-blur-xl border border-border/60 shadow-sm px-3 py-3 sm:px-5 sm:py-4 transition-all duration-300">
+      {/* 1. Clean Full-Width Search Input */}
       <div ref={searchContainerRef} className="relative w-full">
         <input
           type="search"
           value={searchQuery}
           onFocus={() => setIsSearchFocused(true)}
-          onChange={(e) => { setSearchQuery(e.target.value); setHighlightedIndex(-1); setIsSearchFocused(true); }}
+          onChange={(e) => {
+            setSearchQuery(e.target.value)
+            setHighlightedIndex(-1)
+            setIsSearchFocused(true)
+          }}
           onKeyDown={handleKeyDown}
-          placeholder="Find your dream car..."
-          // CHANGED: h-[4.5rem] to h-[5.5rem], text-[1.25rem] to text-[1.35rem], rounded-[1.2rem]
-          className="w-full text-xl sm:text-[1.2rem] rounded-[1.2rem] pl-8 pr-24 h-[2.5rem] sm:h-[3.5rem] border border-border bg-background focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none placeholder:text-muted-foreground/60 text-foreground"
+          placeholder="Find your dream car"
+          className="w-full text-sm sm:text-base rounded-xl pl-4 sm:pl-5 pr-24 h-11 sm:h-12 border border-border bg-background focus:border-primary focus:ring-3 focus:ring-primary/15 transition-all outline-none placeholder:text-muted-foreground/65 text-foreground"
           autoComplete="off"
         />
-        
+
         {searchQuery && (
           <button
             type="button"
-            onClick={() => { setSearchQuery(""); setHighlightedIndex(-1); }}
-            className="absolute right-[5.5rem] top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-2 rounded-full transition-colors"
+            onClick={() => {
+              setSearchQuery("")
+              setHighlightedIndex(-1)
+            }}
+            className="absolute right-14 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1.5 rounded-full transition-colors"
+            aria-label="Clear search"
           >
-            <X className="w-6 h-6" />
+            <X className="w-4 h-4" />
           </button>
         )}
 
-        {/* 3. INCREASED BUTTON SIZE TO MATCH INPUT HEIGHT */}
-        <button 
-          onClick={() => handleSearch()} 
-          // CHANGED: w/h-[3.5rem] to w/h-[4.5rem], right-2 to right-3
-          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-[1.5rem] h-[1.5rem] sm:w-[2.5rem] sm:h-[2.5rem] rounded-[1rem] bg-primary hover:bg-primary/90 hover:scale-105 transition-all text-primary-foreground shadow-md"
+        <button
+          type="button"
+          onClick={() => handleSearch()}
+          aria-label="Search inventory"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 sm:w-9.5 sm:h-9.5 rounded-lg bg-[#e11d48] hover:bg-[#be123c] hover:scale-105 transition-all text-white shadow-xs cursor-pointer"
         >
-          <Search className="w-6 h-6 sm:w-7 sm:h-7" />
+          <Search className="w-4 h-4" />
         </button>
 
         {/* Unified Autocomplete Dropdown */}
