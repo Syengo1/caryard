@@ -1,43 +1,46 @@
+// src/app/(admin)/admin/vehicles/[id]/edit/page.tsx
 import { connection } from "next/server"
 import { notFound } from "next/navigation"
 import { getTaxonomyData } from "@/lib/queries/taxonomy"
 import { getVehicleForEdit } from "@/lib/queries/vehicles"
 import { requireStaffOrAdmin } from "@/lib/auth/roles"
 import { WizardShell } from "@/components/admin/vehicle-wizard/wizard-shell"
+import type { SaveDraftVehicleInput } from "@/lib/validations/vehicle"
 
 export const instant = false
 
 export default async function EditVehiclePage(props: {
   params: Promise<{ id: string }>
 }) {
-  // Opt out of static prerendering for strict DB authorization
   await connection()
   await requireStaffOrAdmin()
-  
+
   const { id } = await props.params
-  
-  // Parallel fetch taxonomy and the specific vehicle data
+
   const [taxonomy, vehicleData] = await Promise.all([
     getTaxonomyData(),
-    getVehicleForEdit(id).catch(() => null) // Catch errors (like bad UUIDs) to prevent unhandled crashes
+    getVehicleForEdit(id).catch(() => null),
   ])
-  
-  // If the vehicle doesn't exist, throw a 404
+
   if (!vehicleData) {
     return notFound()
   }
 
-  // Map the nested Supabase database response into the flat Zod Form Input Shape
-  const initialData = {
-    ...vehicleData,
-    // Safely cast publication_status to satisfy the Zod Partial<SaveDraftVehicleInput> strict literal
-    publication_status: vehicleData.publication_status as "draft",
-    
-    // Safely cast Json to the expected Zod Record, defaulting to empty object if null
-    features: (vehicleData.features as Record<string, boolean>) || {},
-    
-    // Properly type 'c' to eliminate the implicit any error
-    category_ids: vehicleData.vehicle_categories?.map((c: { category_id: string }) => c.category_id) || [],
+  // Strip null values and convert them to undefined to satisfy Zod/React Hook Form types
+  const cleanVehicleData = Object.fromEntries(
+    Object.entries(vehicleData).map(([key, value]) => [key, value === null ? undefined : value])
+  )
+
+  const initialData: Partial<SaveDraftVehicleInput> & { id: string } = {
+    ...(cleanVehicleData as Partial<SaveDraftVehicleInput>),
+    id: vehicleData.id,
+    stock_number: vehicleData.stock_number ?? undefined,
+    publication_status: vehicleData.publication_status,
+    features: (vehicleData.features as SaveDraftVehicleInput["features"]) || {
+      additional_features: [],
+    },
+    category_ids:
+      vehicleData.vehicle_categories?.map((c: { category_id: string }) => c.category_id) || [],
     images: vehicleData.vehicle_images || [],
     purchase_price_kes: vehicleData.vehicle_private_details?.purchase_price_kes ?? undefined,
     supplier_name: vehicleData.vehicle_private_details?.supplier_name ?? undefined,

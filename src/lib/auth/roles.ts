@@ -1,3 +1,5 @@
+// src/lib/auth/roles.ts
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/database.types'
 
@@ -11,8 +13,9 @@ export interface CurrentStaff {
 
 /**
  * Returns current staff profile if authenticated and active, otherwise null.
+ * Memoized per-request via React.cache().
  */
-export async function getCurrentStaff(): Promise<CurrentStaff | null> {
+export const getCurrentStaff = cache(async (): Promise<CurrentStaff | null> => {
   const supabase = await createClient()
 
   const {
@@ -36,11 +39,8 @@ export async function getCurrentStaff(): Promise<CurrentStaff | null> {
     fullName: roleRecord.full_name,
     role: roleRecord.role,
   }
-}
+})
 
-/**
- * Throws an error if the user is not an active staff or admin.
- */
 export async function requireStaffOrAdmin(): Promise<CurrentStaff> {
   const staff = await getCurrentStaff()
   if (!staff) {
@@ -49,9 +49,6 @@ export async function requireStaffOrAdmin(): Promise<CurrentStaff> {
   return staff
 }
 
-/**
- * Throws an error if the user is not an active admin.
- */
 export async function requireAdmin(): Promise<CurrentStaff> {
   const staff = await requireStaffOrAdmin()
   if (staff.role !== 'admin') {

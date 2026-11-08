@@ -49,7 +49,7 @@ export function AdminHeader({ staff }: { staff: CurrentStaff | null }) {
                 <div className="bg-primary text-primary-foreground p-1.5 rounded-md">
                   <CarFront className="w-5 h-5" />
                 </div>
-                <span className="font-heading font-bold text-lg">Al-Husnain</span>
+                <span className="font-heading font-bold text-lg">Mota</span>
               </SheetTitle>
             </SheetHeader>
             <nav className="flex-1 overflow-y-auto p-4 space-y-2">

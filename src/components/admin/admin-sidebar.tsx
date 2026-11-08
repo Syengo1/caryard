@@ -46,7 +46,7 @@ export function AdminSidebar({ staff }: { staff: CurrentStaff | null }) {
             animate={{ opacity: isCollapsed ? 0 : 1, display: isCollapsed ? "none" : "block" }}
             className="font-heading font-bold text-lg"
           >
-            Al-Husnain
+            Mota
           </m.span>
         </div>
         <Button 
