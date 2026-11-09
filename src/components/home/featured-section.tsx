@@ -66,7 +66,7 @@ export function FeaturedSection({ vehicles }: { vehicles: SearchableVehicle[] })
           </div>
 
           {/* Filter Tabs with Live Counts */}
-          <div className="inline-flex items-center p-1.5 rounded-full bg-muted/60 border border-border/60 overflow-x-auto max-w-full self-start lg:self-auto">
+          <div className="inline-flex items-center p-1.5 rounded-full bg-muted/70 border border-border/70 overflow-x-auto max-w-full self-start lg:self-auto">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id
               return (
@@ -75,10 +75,10 @@ export function FeaturedSection({ vehicles }: { vehicles: SearchableVehicle[] })
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    "inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200",
+                    "inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer",
                     isActive
-                      ? "bg-background text-foreground shadow-sm ring-1 ring-border"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-primary text-primary-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-primary hover:bg-primary/10"
                   )}
                 >
                   <span>{tab.label}</span>
@@ -86,8 +86,8 @@ export function FeaturedSection({ vehicles }: { vehicles: SearchableVehicle[] })
                     className={cn(
                       "rounded-full px-1.5 py-0.2 text-[10px] font-mono",
                       isActive
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "bg-muted text-muted-foreground"
+                        ? "bg-brand-red text-brand-red-foreground font-bold"
+                        : "bg-secondary text-secondary-foreground"
                     )}
                   >
                     {tab.count}
