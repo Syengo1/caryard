@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Clock,
   ShieldCheck,
+  Camera,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getVehicleCoverUrl, type SearchableVehicle } from "@/lib/utils/vehicle-search"
@@ -44,7 +45,6 @@ export function VehicleCard({
   const [isTouchPressed, setIsTouchPressed] = useState(false)
   const [isTouchDevice, setIsTouchDevice] = useState(false)
 
-  // Detect touch-primary devices (phones, foldables, tablets)
   useEffect(() => {
     const mediaQuery = window.matchMedia("(hover: none), (pointer: coarse)")
     const updateTouchStatus = () => setIsTouchDevice(mediaQuery.matches)
@@ -54,7 +54,6 @@ export function VehicleCard({
     return () => mediaQuery.removeEventListener("change", updateTouchStatus)
   }, [])
 
-  // Trigger partial open animation when 60% of the card is in the mobile viewport
   const isInView = useInView(cardRef, {
     amount: 0.6,
     margin: "-8% 0px -8% 0px",
@@ -72,7 +71,6 @@ export function VehicleCard({
 
   const isElevated = isHovered || isTouchPressed
 
-  // Keep 13-character length for consistent vertical label centering
   const resolvedCtaText = ctaText ?? (isTouchDevice ? "TAP TO VIEW ->" : "CLICK TO VIEW")
 
   const displayTitle =
@@ -80,9 +78,17 @@ export function VehicleCard({
     `${vehicle.year} ${vehicle.make_name} ${vehicle.model_name}`.trim()
 
   const coverUrl = getVehicleCoverUrl(vehicle.cover_image_path)
+  const innerPhotoUrl =
+    getVehicleCoverUrl(vehicle.secondary_image_path ?? vehicle.cover_image_path) || coverUrl
 
   const formatPriceKES = (price: number | null) =>
     price ? `KSh ${price.toLocaleString("en-KE")}` : "Price on Request"
+
+  const formatMileageShort = (mileage: number | null) => {
+    if (mileage === null) return "N/A"
+    if (mileage >= 1000) return `${Math.round(mileage / 1000)}k km`
+    return `${mileage} km`
+  }
 
   const formatCondition = (condition: string | null) => {
     if (!condition) return "Inspected"
@@ -94,7 +100,7 @@ export function VehicleCard({
       case "in_stock":
         return { label: "In Stock", color: "bg-emerald-600 text-white" }
       case "in_transit":
-        return { label: "In Transit", color: "bg-amber-500 text-white" }
+        return { label: "Transit", color: "bg-amber-500 text-white" }
       case "reserved":
         return { label: "Reserved", color: "bg-blue-600 text-white" }
       case "sold":
@@ -106,7 +112,7 @@ export function VehicleCard({
 
   const statusBadge = formatStatus(vehicle.inventory_status)
 
-  // Dynamic logbook dossier text for Layer 3 (Back Page) using safe ASCII middot (\u00B7)
+  // Dynamic logbook dossier text for Layer 3 (Back Folder Page)
   const specSummaryUnit = [
     displayTitle,
     `Stock #${vehicle.stock_number || "N/A"}`,
@@ -116,28 +122,25 @@ export function VehicleCard({
     vehicle.transmission ? `Transmission: ${vehicle.transmission}` : null,
     vehicle.fuel ? `Fuel: ${vehicle.fuel.replace(/_/g, " ")}` : null,
     vehicle.drive ? `Drivetrain: ${vehicle.drive}` : null,
-    vehicle.condition ? `Condition: ${formatCondition(vehicle.condition)}` : null,
-    vehicle.showroom_city ? `Location: ${vehicle.showroom_city}` : null,
   ]
     .filter(Boolean)
     .join(" \u00B7 ")
 
-  const backText = `${specSummaryUnit}. `.repeat(10).trim()
+  const backText = `${specSummaryUnit}. `.repeat(8).trim()
 
   return (
     <Link
       href={`/vehicles/${vehicle.slug}`}
       onClick={onClick}
       className={cn(
-        // Fixed 284x384 stage pre-allocates the 28px right fan-out & 20px vertical 3D projection
-        // so opening the card NEVER changes layout bounds or collides with neighbors.
-        "group relative isolate block h-[384px] w-[284px] max-w-full mx-auto select-none focus:outline-none",
+        // Taller aspect-[200/312] guarantees vertical room for 2-line titles, specs, and full price
+        "group relative isolate block w-full max-w-[215px] aspect-[200/312] mx-auto select-none focus:outline-none",
         isElevated ? "z-30" : "z-10"
       )}
     >
       <motion.div
         ref={cardRef}
-        className="relative h-[384px] w-[284px] cursor-pointer select-none"
+        className="relative h-full w-full cursor-pointer select-none"
         onMouseEnter={() => {
           if (!isTouchDevice) setIsHovered(true)
         }}
@@ -150,32 +153,19 @@ export function VehicleCard({
         initial="default"
         animate={activeVariant}
       >
-        {/* Subtle ground shadow pedestal that reacts when the logbook opens */}
+        {/* 3D Folder Stage */}
         <div
-          className={cn(
-            "pointer-events-none absolute bottom-1 left-2 right-3 h-6 rounded-full bg-black/10 dark:bg-black/40 blur-xl transition-all duration-300",
-            (activeVariant === "hover" || activeVariant === "mobilePeek") &&
-              "translate-x-2 scale-x-105 bg-[#178BFF]/20 dark:bg-[#178BFF]/25"
-          )}
-        />
-
-        {/* 3D Book Stage (256px x 364px anchored at top-[8px] left-[2px], leaving 26px right clearance) */}
-        <div
-          className="
-            
-            absolute left-[2px] top-[8px] h-[364px] w-[256px] overflow-visible
-          "
+          className="absolute left-0 top-[2%] h-[95%] w-[89%] overflow-visible"
           style={{
             perspective: "1500px",
             transformStyle: "preserve-3d",
           }}
         >
           {/* =========================================================
-              LAYER 1: FRONT COVER - z-index: 4
-              Dimensions: 256px x 364px
+              LAYER 1: FRONT FOLDER COVER - z-index: 4
           ========================================================= */}
           <motion.div
-            className="relative z-[4] flex h-[364px] w-[256px] flex-none flex-col items-start justify-between overflow-clip rounded-[10px] bg-[#ECF2EE] dark:bg-zinc-900 p-[15px] will-change-transform border border-black/[0.08] dark:border-white/10 shadow-md"
+            className="relative z-[4] flex h-full w-full flex-none flex-col justify-between overflow-clip rounded-[8px] bg-[#ECF2EE] dark:bg-zinc-900 p-2.5 sm:p-3 will-change-transform border border-black/[0.08] dark:border-white/10 shadow-sm"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "0% 100% 0px",
@@ -183,16 +173,16 @@ export function VehicleCard({
             variants={{
               default: { z: 1, rotateY: -1 },
               mobilePeek: { z: 1, rotateY: -20 },
-              hover: { z: 1, rotateY: -34 },
+              hover: { z: 1, rotateY: -35 },
             }}
             transition={SPRING_TRANSITION}
           >
-            {/* 1. TOP HEADER ROW: LOGBOOK Badge + Stock Number & Status Pill */}
-            <div className="flex w-full items-center justify-between gap-1.5">
-              <div className="flex flex-row items-center gap-[4px] min-w-0">
+            {/* 1. TOP HEADER ROW: LOGBOOK Badge + Status */}
+            <div className="flex w-full shrink-0 items-center justify-between gap-1">
+              <div className="flex flex-row items-center gap-1 min-w-0">
                 <svg
                   viewBox="0 0 11.957 12"
-                  className="h-[11px] w-[11px] shrink-0 overflow-visible"
+                  className="h-[10px] w-[10px] shrink-0 overflow-visible"
                   aria-hidden="true"
                 >
                   <path
@@ -204,37 +194,32 @@ export function VehicleCard({
                     fill="rgb(125, 157, 179)"
                   />
                 </svg>
-                <p className="text-[9.5px] font-extrabold leading-none tracking-[-0.03em] text-[#647F92] dark:text-slate-400 uppercase">
+                <p className="text-[8.5px] font-extrabold leading-none tracking-[-0.03em] text-[#647F92] dark:text-slate-400 uppercase truncate">
                   LOGBOOK
                 </p>
-                {vehicle.stock_number && (
-                  <span className="truncate text-[9.5px] font-mono font-semibold text-[#647F92]/85 dark:text-slate-400/80">
-                    {"\u00B7"} {vehicle.stock_number}
-                  </span>
-                )}
               </div>
 
               <div className="flex items-center gap-1 shrink-0">
                 {vehicle.is_featured && (
-                  <span className="inline-flex items-center gap-0.5 rounded-[4px] bg-amber-500/15 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-tight text-amber-700 dark:text-amber-400">
-                    <Sparkles className="h-2.5 w-2.5" /> Hot
+                  <span className="inline-flex items-center rounded-[3px] bg-amber-500/15 px-1 py-0.5 text-[7.5px] font-bold uppercase text-amber-700 dark:text-amber-400">
+                    <Sparkles className="h-2 w-2" />
                   </span>
                 )}
                 <span
-                  className={`inline-flex items-center gap-0.5 rounded-[4px] px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-tight ${statusBadge.color}`}
+                  className={`inline-flex items-center gap-0.5 rounded-[3px] px-1.5 py-0.5 text-[7.5px] font-bold uppercase tracking-tight ${statusBadge.color}`}
                 >
                   {vehicle.inventory_status === "in_stock" ? (
-                    <CheckCircle2 className="h-2.5 w-2.5" />
+                    <CheckCircle2 className="h-2 w-2" />
                   ) : (
-                    <Clock className="h-2.5 w-2.5" />
+                    <Clock className="h-2 w-2" />
                   )}
                   {statusBadge.label}
                 </span>
               </div>
             </div>
 
-            {/* 2. COVER IMAGE BLOCK */}
-            <div className="relative mt-[8px] h-[136px] w-full shrink-0 overflow-hidden rounded-[6px] bg-[#D3DACD]/70 dark:bg-zinc-800 border border-black/[0.04] dark:border-white/5">
+            {/* 2. COVER IMAGE BLOCK (Fixed 37% height so bottom content never gets squeezed) */}
+            <div className="relative mt-1.5 h-[37%] w-full shrink-0 overflow-hidden rounded-[6px] bg-[#D3DACD]/70 dark:bg-zinc-800 border border-black/[0.04] dark:border-white/5">
               {coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -246,155 +231,166 @@ export function VehicleCard({
                 />
               ) : (
                 <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-[#748FA1]">
-                  <CarFront className="h-7 w-7 opacity-50" />
-                  <span className="text-[9.5px] font-semibold uppercase tracking-wider">
-                    No Cover Photo
-                  </span>
+                  <CarFront className="h-6 w-6 opacity-50" />
+                  <span className="text-[8px] font-semibold uppercase">No Photo</span>
                 </div>
               )}
 
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-9 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-7 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
 
               {vehicle.condition && (
-                <span className="absolute bottom-1.5 left-1.5 rounded-[4px] bg-black/70 px-1.5 py-0.5 text-[8.5px] font-semibold capitalize tracking-tight text-white backdrop-blur-xs">
+                <span className="absolute bottom-1 left-1 rounded-[3px] bg-black/70 px-1.5 py-0.5 text-[7.5px] font-semibold capitalize tracking-tight text-white">
                   {formatCondition(vehicle.condition)}
                 </span>
               )}
 
               {vehicle.showroom_city && (
-                <span className="absolute bottom-1.5 right-1.5 inline-flex items-center gap-0.5 rounded-[4px] bg-white/95 px-1.5 py-0.5 text-[8.5px] font-bold tracking-tight text-zinc-900 shadow-2xs">
-                  <MapPin className="h-2.5 w-2.5 text-[#178BFF]" />
+                <span className="absolute bottom-1 right-1 inline-flex items-center gap-0.5 rounded-[3px] bg-white/95 px-1 py-0.5 text-[7.5px] font-bold tracking-tight text-zinc-900">
+                  <MapPin className="h-2 w-2 text-[#178BFF]" />
                   {vehicle.showroom_city}
                 </span>
               )}
             </div>
 
-            {/* 3. VEHICLE HEADLINE & KEY SPECS BELOW IMAGE */}
-            <div className="mt-[10px] flex w-full flex-1 flex-col justify-between">
-              <div className="space-y-0.5">
-                <div className="flex items-center justify-between text-[10.5px] font-bold tracking-[-0.02em] text-[#647F92] dark:text-slate-400">
+            {/* 3. UNIFORM DETAILS & SPECS SECTION */}
+            <div className="mt-1.5 flex w-full flex-1 flex-col justify-between min-h-0">
+              <div className="shrink-0">
+                <div className="flex items-center justify-between text-[9px] font-bold tracking-[-0.02em] text-[#647F92] dark:text-slate-400">
                   <span className="truncate">
                     {vehicle.year} {"\u00B7"} {vehicle.make_name || "Vehicle"}
                   </span>
-                  {vehicle.body_type && (
-                    <span className="shrink-0 rounded bg-[#D3DACD]/80 dark:bg-zinc-800 px-1.5 py-0.2 text-[8.5px] font-semibold text-zinc-800 dark:text-zinc-300">
-                      {vehicle.body_type}
+                  {vehicle.stock_number && (
+                    <span className="shrink-0 font-mono text-[8px] text-[#647F92]/80">
+                      #{vehicle.stock_number.slice(-4)}
                     </span>
                   )}
                 </div>
 
-                <h3 className="line-clamp-2 text-[16.5px] font-bold leading-[1.2em] tracking-[-0.03em] text-[#178BFF] dark:text-[#3B9EFF]">
+                {/* FIXED 2-LINE HEIGHT: 1-line and 2-line titles take the exact same vertical space */}
+                <h3
+                  title={displayTitle}
+                  className="mt-0.5 h-[30px] sm:h-[32px] line-clamp-2 text-[12px] sm:text-[13px] font-bold leading-[15px] sm:leading-[16px] tracking-[-0.03em] text-[#178BFF] dark:text-[#3B9EFF]"
+                >
                   {displayTitle}
                 </h3>
               </div>
 
-              {/* 4-Pill Specs Grid with High-Contrast Text & Icons */}
-              <div className="my-[8px] grid grid-cols-2 gap-x-2 gap-y-1.5 rounded-[6px] bg-white/80 dark:bg-zinc-800/80 px-2.5 py-2 text-[10.5px] font-semibold tracking-[-0.01em] text-zinc-800 dark:text-zinc-200 border border-black/[0.04] dark:border-white/5">
-                <div className="flex items-center gap-1.5 truncate">
-                  <Gauge className="h-3.5 w-3.5 shrink-0 text-[#178BFF]" />
-                  <span className="truncate">
-                    {vehicle.mileage_km !== null
-                      ? `${vehicle.mileage_km.toLocaleString()} km`
-                      : "N/A"}
-                  </span>
+              {/* Compact 2x2 Specs Grid */}
+              <div className="my-1 shrink-0 grid grid-cols-2 gap-x-1.5 gap-y-1 rounded-[5px] bg-white/80 dark:bg-zinc-800/80 px-1.5 py-1.5 text-[8.5px] sm:text-[9px] font-semibold tracking-[-0.01em] text-zinc-800 dark:text-zinc-200 border border-black/[0.04] dark:border-white/5">
+                <div className="flex items-center gap-1 truncate">
+                  <Gauge className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
+                  <span className="truncate">{formatMileageShort(vehicle.mileage_km)}</span>
                 </div>
 
-                <div className="flex items-center gap-1.5 truncate">
-                  <Settings2 className="h-3.5 w-3.5 shrink-0 text-[#178BFF]" />
+                <div className="flex items-center gap-1 truncate">
+                  <Settings2 className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
                   <span className="capitalize truncate">
-                    {vehicle.transmission || "Auto"}
+                    {vehicle.transmission === "automatic"
+                      ? "Auto"
+                      : vehicle.transmission || "Auto"}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 truncate">
-                  <Fuel className="h-3.5 w-3.5 shrink-0 text-[#178BFF]" />
+                <div className="flex items-center gap-1 truncate">
+                  <Fuel className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
                   <span className="capitalize truncate">
                     {vehicle.fuel ? vehicle.fuel.replace(/_/g, " ") : "Petrol"}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 truncate">
+                <div className="flex items-center gap-1 truncate">
                   {vehicle.engine_cc ? (
                     <>
-                      <Zap className="h-3.5 w-3.5 shrink-0 text-[#178BFF]" />
-                      <span className="truncate">
-                        {vehicle.engine_cc}cc
-                        {vehicle.drive ? ` \u00B7 ${vehicle.drive}` : ""}
-                      </span>
+                      <Zap className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
+                      <span className="truncate">{vehicle.engine_cc}cc</span>
                     </>
                   ) : (
                     <>
-                      <Compass className="h-3.5 w-3.5 shrink-0 text-[#178BFF]" />
-                      <span className="uppercase truncate">
-                        {vehicle.drive || "2WD"}
-                      </span>
+                      <Compass className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
+                      <span className="uppercase truncate">{vehicle.drive || "2WD"}</span>
                     </>
                   )}
                 </div>
               </div>
 
-              {/* 4. BOTTOM PRICE & VERIFICATION FOOTER */}
-              <div className="flex w-full items-end justify-between border-t border-[#748FA1]/20 pt-1.5">
-                <div>
-                  <p className="text-[8.5px] font-bold uppercase tracking-wider text-[#647F92] dark:text-slate-400">
-                    Showroom Price
+              {/* 4. BOTTOM PRICE FOOTER (shrink-0 prevents clipping) */}
+              <div className="flex w-full shrink-0 items-end justify-between border-t border-[#748FA1]/20 pt-1">
+                <div className="min-w-0 pr-1">
+                  <p className="text-[7px] font-bold uppercase leading-none tracking-wider text-[#647F92] dark:text-slate-400">
+                    Price
                   </p>
-                  <p className="text-[16px] font-extrabold leading-tight tracking-[-0.03em] text-zinc-900 dark:text-white">
+                  <p className="mt-0.5 text-[12px] sm:text-[13px] font-extrabold leading-none tracking-[-0.03em] text-zinc-900 dark:text-white truncate">
                     {formatPriceKES(vehicle.price_kes)}
                   </p>
                 </div>
 
                 {vehicle.is_negotiable ? (
-                  <span className="rounded-[4px] bg-[#178BFF]/12 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-tight text-[#178BFF]">
-                    Negotiable
+                  <span className="shrink-0 rounded-[3px] bg-[#178BFF]/12 px-1 py-0.5 text-[7px] font-bold uppercase leading-none tracking-tight text-[#178BFF]">
+                    Nego
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-0.5 text-[9.5px] font-bold text-[#647F92] dark:text-slate-400">
-                    <ShieldCheck className="h-3 w-3 text-[#178BFF]" /> Verified
-                  </span>
+                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#178BFF]" />
                 )}
               </div>
             </div>
           </motion.div>
 
           {/* =========================================================
-              LAYER 2: MIDDLE BLUE INSERT CARD - z-index: 3
-              Proportional to 256x364 cover:
-              left: 12px, top: 26px, width: 232px, height: 312px
-              Hover: x: 23.5, y: 12, rotate: 4 (Stays strictly inside 284px stage!)
+              LAYER 2: INNER VEHICLE PHOTO INSERT CARD - z-index: 3
           ========================================================= */}
           <motion.div
-            className="absolute left-[12px] top-[26px] z-[3] flex h-[312px] w-[232px] flex-col items-end justify-center overflow-visible rounded-[10px] bg-[#178BFF] shadow-md"
+            className="absolute left-[4.6%] top-[7.7%] z-[3] flex h-[84.6%] w-[90.8%] flex-col items-end justify-center overflow-hidden rounded-[8px] bg-zinc-900 border-2 border-white dark:border-zinc-700 shadow-md"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "0% 100% 0px",
             }}
             variants={{
-              default: { x: 0, y: 0, rotate: 0 },
-              mobilePeek: { x: 16, y: 8.5, rotate: 2.6 },
-              hover: { x: 23.5, y: 12, rotate: 4 },
+              default: { x: "0%", y: "0%", rotate: 0 },
+              mobilePeek: { x: "6.8%", y: "2.8%", rotate: 2.6 },
+              hover: { x: "10%", y: "4.4%", rotate: 4 },
             }}
             transition={SPRING_TRANSITION}
           >
-            {/* Vertical CTA Label */}
+            {innerPhotoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={innerPhotoUrl}
+                alt={`${displayTitle} gallery preview`}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                draggable={false}
+                loading="lazy"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-[#178BFF]" />
+            )}
+
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/85 via-black/55 to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-[3px] bg-[#178BFF]" />
+
+            {vehicle.image_count && vehicle.image_count > 1 && (
+              <div className="absolute bottom-2 right-2 z-[2] inline-flex items-center gap-0.5 rounded bg-black/75 px-1.5 py-0.5 text-[8px] font-bold text-white backdrop-blur-xs">
+                <Camera className="h-2.5 w-2.5 text-[#3B9EFF]" />
+                <span>{vehicle.image_count}</span>
+              </div>
+            )}
+
             <div
-              className="absolute right-[-19px] top-[22%] z-[1] flex items-center justify-start"
+              className="absolute right-[-18px] top-[24%] z-[2] flex items-center justify-start"
               style={{
                 transform: "translateY(-50%) rotate(-90deg)",
               }}
             >
-              <p className="whitespace-pre text-[11px] font-semibold leading-[1.2] tracking-[-0.04em] text-white">
+              <p className="whitespace-pre text-[9.5px] font-bold leading-none tracking-[-0.02em] text-white drop-shadow">
                 {resolvedCtaText}
               </p>
             </div>
           </motion.div>
 
           {/* =========================================================
-              LAYER 3: BACK PAGE - z-index: 2
-              Dimensions: 256px x 364px
+              LAYER 3: BACK FOLDER PAGE - z-index: 2
           ========================================================= */}
           <motion.div
-            className="absolute left-0 top-0 z-[2] flex h-[364px] w-[256px] flex-col items-start justify-center gap-[14px] rounded-[10px] bg-[#D3DACD] dark:bg-zinc-800 p-[18px] border border-black/[0.05] dark:border-white/5"
+            className="absolute left-0 top-0 z-[2] flex h-full w-full flex-col items-start justify-center rounded-[8px] bg-[#D3DACD] dark:bg-zinc-800 p-3 border border-black/[0.05] dark:border-white/5"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "0% 100% 0px",
@@ -407,7 +403,7 @@ export function VehicleCard({
             transition={SPRING_TRANSITION}
           >
             <div className="flex h-full w-full flex-row items-center justify-center overflow-clip">
-              <p className="flex-1 text-justify text-[11px] font-semibold leading-[1.22em] tracking-[-0.04em] text-[#9BA1A5] dark:text-zinc-500">
+              <p className="flex-1 text-justify text-[9.5px] font-semibold leading-[1.2em] tracking-[-0.04em] text-[#9BA1A5] dark:text-zinc-500">
                 {backText}
               </p>
             </div>

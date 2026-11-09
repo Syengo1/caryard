@@ -212,6 +212,10 @@ export async function getSearchableVehicles(): Promise<SearchableVehicle[]> {
       features: row.features || {},
       category_ids: (row.vehicle_categories || []).map((c) => c.category_id),
       cover_image_path: sortedImages[0]?.storage_path || null,
+      // NEW: Pass the 2nd uploaded photo (or fallback to cover) for the inner Layer 2 file card
+      secondary_image_path:
+        sortedImages[1]?.storage_path || sortedImages[0]?.storage_path || null,
+      image_count: sortedImages.length,
       is_featured: row.is_featured,
       inventory_status: row.inventory_status,
       updated_at: row.updated_at,

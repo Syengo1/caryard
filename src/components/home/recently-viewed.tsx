@@ -15,7 +15,7 @@ export function RecentlyViewed({ vehicles }: { vehicles: SearchableVehicle[] }) 
   const recentVehicles = recentIds
     .map((id) => vehicles.find((v) => v.id === id))
     .filter((v): v is SearchableVehicle => v !== undefined)
-    .slice(0, 4)
+    .slice(0, 6)
 
   if (recentVehicles.length === 0) return null
 
@@ -51,7 +51,6 @@ export function RecentlyViewed({ vehicles }: { vehicles: SearchableVehicle[] }) 
         <VehicleGrid
           vehicles={recentVehicles}
           keyPrefix="recent"
-          variant="pedestal"
         />
       </div>
     </section>

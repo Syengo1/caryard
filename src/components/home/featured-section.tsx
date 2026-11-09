@@ -35,7 +35,7 @@ export function FeaturedSection({ vehicles }: { vehicles: SearchableVehicle[] })
         if (!a.is_featured && b.is_featured) return 1
         return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       })
-      .slice(0, 8)
+      .slice(0, 12)
   }, [vehicles, activeTab])
 
   const tabs: { id: TabFilter; label: string; count: number }[] = [
@@ -103,7 +103,6 @@ export function FeaturedSection({ vehicles }: { vehicles: SearchableVehicle[] })
           <VehicleGrid
             vehicles={filteredVehicles}
             keyPrefix="featured"
-            variant="pedestal"
           />
         ) : (
           <div className="text-center py-20 bg-muted/20 border-2 border-dashed rounded-2xl">

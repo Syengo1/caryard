@@ -26,6 +26,8 @@ export interface SearchableVehicle {
   features: Record<string, unknown>
   category_ids: string[]
   cover_image_path: string | null
+  secondary_image_path?: string | null
+  image_count?: number
   is_featured: boolean
   inventory_status: string
   updated_at: string
