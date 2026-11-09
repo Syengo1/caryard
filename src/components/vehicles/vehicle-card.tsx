@@ -98,13 +98,13 @@ export function VehicleCard({
   const formatStatus = (status: string) => {
     switch (status) {
       case "in_stock":
-        return { label: "In Stock", color: "bg-emerald-600 text-white" }
+        return { label: "In Stock", color: "bg-primary text-primary-foreground" }
       case "in_transit":
-        return { label: "Transit", color: "bg-amber-500 text-white" }
+        return { label: "Transit", color: "bg-amber-600 text-white" }
       case "reserved":
-        return { label: "Reserved", color: "bg-blue-600 text-white" }
+        return { label: "Reserved", color: "bg-secondary text-secondary-foreground" }
       case "sold":
-        return { label: "Sold", color: "bg-rose-600 text-white" }
+        return { label: "Sold", color: "bg-brand-red text-brand-red-foreground" }
       default:
         return { label: status.replace(/_/g, " "), color: "bg-slate-700 text-white" }
     }
@@ -112,7 +112,6 @@ export function VehicleCard({
 
   const statusBadge = formatStatus(vehicle.inventory_status)
 
-  // Dynamic logbook dossier text for Layer 3 (Back Folder Page)
   const specSummaryUnit = [
     displayTitle,
     `Stock #${vehicle.stock_number || "N/A"}`,
@@ -133,7 +132,6 @@ export function VehicleCard({
       href={`/vehicles/${vehicle.slug}`}
       onClick={onClick}
       className={cn(
-        // Taller aspect-[200/312] guarantees vertical room for 2-line titles, specs, and full price
         "group relative isolate block w-full max-w-[215px] aspect-[200/312] mx-auto select-none focus:outline-none",
         isElevated ? "z-30" : "z-10"
       )}
@@ -165,7 +163,7 @@ export function VehicleCard({
               LAYER 1: FRONT FOLDER COVER - z-index: 4
           ========================================================= */}
           <motion.div
-            className="relative z-[4] flex h-full w-full flex-none flex-col justify-between overflow-clip rounded-[8px] bg-[#ECF2EE] dark:bg-zinc-900 p-2.5 sm:p-3 will-change-transform border border-black/[0.08] dark:border-white/10 shadow-sm"
+            className="relative z-[4] flex h-full w-full flex-none flex-col justify-between overflow-clip rounded-[8px] bg-folder-front p-2.5 sm:p-3 will-change-transform border border-border/80 shadow-sm"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "0% 100% 0px",
@@ -182,26 +180,26 @@ export function VehicleCard({
               <div className="flex flex-row items-center gap-1 min-w-0">
                 <svg
                   viewBox="0 0 11.957 12"
-                  className="h-[10px] w-[10px] shrink-0 overflow-visible"
+                  className="h-[10px] w-[10px] shrink-0 overflow-visible text-primary"
                   aria-hidden="true"
                 >
                   <path
                     d="M 7.885 0.006 C 7.713 -0.019 7.538 0.033 7.407 0.15 C 7.275 0.267 7.2 0.437 7.2 0.615 L 7.2 4.265 C 7.2 4.605 7.469 4.88 7.8 4.88 L 11.358 4.88 C 11.532 4.88 11.697 4.802 11.811 4.668 C 11.925 4.533 11.976 4.354 11.951 4.177 C 11.647 2.016 9.992 0.319 7.885 0.006 Z"
-                    fill="rgb(125, 157, 179)"
+                    fill="currentColor"
                   />
                   <path
                     d="M 5.4 0.923 C 2.418 0.923 0 3.403 0 6.462 C 0 9.52 2.418 12 5.4 12 C 8.382 12 10.8 9.52 10.8 6.462 C 10.8 6.122 10.531 5.846 10.2 5.846 L 6 5.846 L 6 1.538 C 6 1.199 5.731 0.923 5.4 0.923 Z"
-                    fill="rgb(125, 157, 179)"
+                    fill="currentColor"
                   />
                 </svg>
-                <p className="text-[8.5px] font-extrabold leading-none tracking-[-0.03em] text-[#647F92] dark:text-slate-400 uppercase truncate">
+                <p className="text-[8.5px] font-extrabold leading-none tracking-[-0.03em] text-folder-label uppercase truncate">
                   LOGBOOK
                 </p>
               </div>
 
               <div className="flex items-center gap-1 shrink-0">
                 {vehicle.is_featured && (
-                  <span className="inline-flex items-center rounded-[3px] bg-amber-500/15 px-1 py-0.5 text-[7.5px] font-bold uppercase text-amber-700 dark:text-amber-400">
+                  <span className="inline-flex items-center rounded-[3px] bg-brand-red/15 px-1 py-0.5 text-[7.5px] font-bold uppercase text-brand-red">
                     <Sparkles className="h-2 w-2" />
                   </span>
                 )}
@@ -218,8 +216,8 @@ export function VehicleCard({
               </div>
             </div>
 
-            {/* 2. COVER IMAGE BLOCK (Fixed 37% height so bottom content never gets squeezed) */}
-            <div className="relative mt-1.5 h-[37%] w-full shrink-0 overflow-hidden rounded-[6px] bg-[#D3DACD]/70 dark:bg-zinc-800 border border-black/[0.04] dark:border-white/5">
+            {/* 2. COVER IMAGE BLOCK */}
+            <div className="relative mt-1.5 h-[37%] w-full shrink-0 overflow-hidden rounded-[6px] bg-folder-back/70 border border-border/50">
               {coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -230,7 +228,7 @@ export function VehicleCard({
                   loading="lazy"
                 />
               ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-[#748FA1]">
+                <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-folder-label">
                   <CarFront className="h-6 w-6 opacity-50" />
                   <span className="text-[8px] font-semibold uppercase">No Photo</span>
                 </div>
@@ -246,7 +244,7 @@ export function VehicleCard({
 
               {vehicle.showroom_city && (
                 <span className="absolute bottom-1 right-1 inline-flex items-center gap-0.5 rounded-[3px] bg-white/95 px-1 py-0.5 text-[7.5px] font-bold tracking-tight text-zinc-900">
-                  <MapPin className="h-2 w-2 text-[#178BFF]" />
+                  <MapPin className="h-2 w-2 text-brand-red" />
                   {vehicle.showroom_city}
                 </span>
               )}
@@ -255,35 +253,35 @@ export function VehicleCard({
             {/* 3. UNIFORM DETAILS & SPECS SECTION */}
             <div className="mt-1.5 flex w-full flex-1 flex-col justify-between min-h-0">
               <div className="shrink-0">
-                <div className="flex items-center justify-between text-[9px] font-bold tracking-[-0.02em] text-[#647F92] dark:text-slate-400">
+                <div className="flex items-center justify-between text-[9px] font-bold tracking-[-0.02em] text-folder-label">
                   <span className="truncate">
                     {vehicle.year} {"\u00B7"} {vehicle.make_name || "Vehicle"}
                   </span>
                   {vehicle.stock_number && (
-                    <span className="shrink-0 font-mono text-[8px] text-[#647F92]/80">
+                    <span className="shrink-0 font-mono text-[8px] text-folder-label/80">
                       #{vehicle.stock_number.slice(-4)}
                     </span>
                   )}
                 </div>
 
-                {/* FIXED 2-LINE HEIGHT: 1-line and 2-line titles take the exact same vertical space */}
+                {/* Vehicle Headline in Toned-Down Primary Green */}
                 <h3
                   title={displayTitle}
-                  className="mt-0.5 h-[30px] sm:h-[32px] line-clamp-2 text-[12px] sm:text-[13px] font-bold leading-[15px] sm:leading-[16px] tracking-[-0.03em] text-[#178BFF] dark:text-[#3B9EFF]"
+                  className="mt-0.5 h-[30px] sm:h-[32px] line-clamp-2 text-[12px] sm:text-[13px] font-bold leading-[15px] sm:leading-[16px] tracking-[-0.03em] text-primary"
                 >
                   {displayTitle}
                 </h3>
               </div>
 
               {/* Compact 2x2 Specs Grid */}
-              <div className="my-1 shrink-0 grid grid-cols-2 gap-x-1.5 gap-y-1 rounded-[5px] bg-white/80 dark:bg-zinc-800/80 px-1.5 py-1.5 text-[8.5px] sm:text-[9px] font-semibold tracking-[-0.01em] text-zinc-800 dark:text-zinc-200 border border-black/[0.04] dark:border-white/5">
+              <div className="my-1 shrink-0 grid grid-cols-2 gap-x-1.5 gap-y-1 rounded-[5px] bg-card/85 px-1.5 py-1.5 text-[8.5px] sm:text-[9px] font-semibold tracking-[-0.01em] text-foreground border border-border/50">
                 <div className="flex items-center gap-1 truncate">
-                  <Gauge className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
+                  <Gauge className="h-2.5 w-2.5 shrink-0 text-primary" />
                   <span className="truncate">{formatMileageShort(vehicle.mileage_km)}</span>
                 </div>
 
                 <div className="flex items-center gap-1 truncate">
-                  <Settings2 className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
+                  <Settings2 className="h-2.5 w-2.5 shrink-0 text-primary" />
                   <span className="capitalize truncate">
                     {vehicle.transmission === "automatic"
                       ? "Auto"
@@ -292,7 +290,7 @@ export function VehicleCard({
                 </div>
 
                 <div className="flex items-center gap-1 truncate">
-                  <Fuel className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
+                  <Fuel className="h-2.5 w-2.5 shrink-0 text-primary" />
                   <span className="capitalize truncate">
                     {vehicle.fuel ? vehicle.fuel.replace(/_/g, " ") : "Petrol"}
                   </span>
@@ -301,35 +299,35 @@ export function VehicleCard({
                 <div className="flex items-center gap-1 truncate">
                   {vehicle.engine_cc ? (
                     <>
-                      <Zap className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
+                      <Zap className="h-2.5 w-2.5 shrink-0 text-primary" />
                       <span className="truncate">{vehicle.engine_cc}cc</span>
                     </>
                   ) : (
                     <>
-                      <Compass className="h-2.5 w-2.5 shrink-0 text-[#178BFF]" />
+                      <Compass className="h-2.5 w-2.5 shrink-0 text-primary" />
                       <span className="uppercase truncate">{vehicle.drive || "2WD"}</span>
                     </>
                   )}
                 </div>
               </div>
 
-              {/* 4. BOTTOM PRICE FOOTER (shrink-0 prevents clipping) */}
-              <div className="flex w-full shrink-0 items-end justify-between border-t border-[#748FA1]/20 pt-1">
+              {/* 4. BOTTOM PRICE FOOTER */}
+              <div className="flex w-full shrink-0 items-end justify-between border-t border-border/70 pt-1">
                 <div className="min-w-0 pr-1">
-                  <p className="text-[7px] font-bold uppercase leading-none tracking-wider text-[#647F92] dark:text-slate-400">
+                  <p className="text-[7px] font-bold uppercase leading-none tracking-wider text-folder-label">
                     Price
                   </p>
-                  <p className="mt-0.5 text-[12px] sm:text-[13px] font-extrabold leading-none tracking-[-0.03em] text-zinc-900 dark:text-white truncate">
+                  <p className="mt-0.5 text-[12px] sm:text-[13px] font-extrabold leading-none tracking-[-0.03em] text-foreground truncate">
                     {formatPriceKES(vehicle.price_kes)}
                   </p>
                 </div>
 
                 {vehicle.is_negotiable ? (
-                  <span className="shrink-0 rounded-[3px] bg-[#178BFF]/12 px-1 py-0.5 text-[7px] font-bold uppercase leading-none tracking-tight text-[#178BFF]">
+                  <span className="shrink-0 rounded-[3px] bg-secondary px-1 py-0.5 text-[7px] font-bold uppercase leading-none tracking-tight text-secondary-foreground">
                     Nego
                   </span>
                 ) : (
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#178BFF]" />
+                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
                 )}
               </div>
             </div>
@@ -361,15 +359,16 @@ export function VehicleCard({
                 loading="lazy"
               />
             ) : (
-              <div className="absolute inset-0 bg-[#178BFF]" />
+              <div className="absolute inset-0 bg-primary" />
             )}
 
+            {/* Right-Edge Spine Scrim & Secondary Crimson-Red Accent Strip */}
             <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/85 via-black/55 to-transparent" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-[3px] bg-[#178BFF]" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-[3px] bg-brand-red" />
 
             {vehicle.image_count && vehicle.image_count > 1 && (
               <div className="absolute bottom-2 right-2 z-[2] inline-flex items-center gap-0.5 rounded bg-black/75 px-1.5 py-0.5 text-[8px] font-bold text-white backdrop-blur-xs">
-                <Camera className="h-2.5 w-2.5 text-[#3B9EFF]" />
+                <Camera className="h-2.5 w-2.5 text-brand-red" />
                 <span>{vehicle.image_count}</span>
               </div>
             )}
@@ -390,7 +389,7 @@ export function VehicleCard({
               LAYER 3: BACK FOLDER PAGE - z-index: 2
           ========================================================= */}
           <motion.div
-            className="absolute left-0 top-0 z-[2] flex h-full w-full flex-col items-start justify-center rounded-[8px] bg-[#D3DACD] dark:bg-zinc-800 p-3 border border-black/[0.05] dark:border-white/5"
+            className="absolute left-0 top-0 z-[2] flex h-full w-full flex-col items-start justify-center rounded-[8px] bg-folder-back p-3 border border-border/50"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "0% 100% 0px",
@@ -403,7 +402,7 @@ export function VehicleCard({
             transition={SPRING_TRANSITION}
           >
             <div className="flex h-full w-full flex-row items-center justify-center overflow-clip">
-              <p className="flex-1 text-justify text-[9.5px] font-semibold leading-[1.2em] tracking-[-0.04em] text-[#9BA1A5] dark:text-zinc-500">
+              <p className="flex-1 text-justify text-[9.5px] font-semibold leading-[1.2em] tracking-[-0.04em] text-folder-label/75">
                 {backText}
               </p>
             </div>
