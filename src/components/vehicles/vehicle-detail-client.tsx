@@ -50,7 +50,7 @@ export function VehicleDetailClient({
       case "in_stock":
         return {
           label: "In Stock • Ready for Viewing",
-          className: "bg-primary text-primary-foreground",
+          className: "bg-brand-green text-brand-green-foreground",
         }
       case "in_transit":
         return {
@@ -65,10 +65,10 @@ export function VehicleDetailClient({
       case "sold":
         return {
           label: "Sold",
-          className: "bg-brand-red text-brand-red-foreground",
+          className: "bg-primary text-primary-foreground",
         }
       default:
-        return { label: status, className: "bg-slate-700 text-white" }
+        return { label: status, className: "bg-secondary text-secondary-foreground" }
     }
   }
 

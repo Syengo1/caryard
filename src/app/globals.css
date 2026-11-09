@@ -5,88 +5,95 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* BACKGROUNDS: Clean ivory-white with a whisper of sage-green */
-  --background: oklch(0.992 0.003 175);
-  --foreground: oklch(0.17 0.02 175);
+  /* BACKGROUNDS: Whisper-soft sage-ivory */
+  --background: oklch(0.982 0.008 172);
+  --foreground: oklch(0.20 0.025 174);
 
   /* CARDS & POPOVERS */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.17 0.02 175);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.17 0.02 175);
+  --card: oklch(0.996 0.003 172);
+  --card-foreground: oklch(0.20 0.025 174);
+  --popover: oklch(0.996 0.003 172);
+  --popover-foreground: oklch(0.20 0.025 174);
 
-  /* PRIMARY: Toned-Down Pine / Teal-Green from Banner (#0e7466) */
-  --primary: oklch(0.48 0.092 176);
-  --primary-foreground: oklch(0.985 0.003 175);
+  /* PRIMARY: Faded Soft Red / Dusty Terracotta Rose (#bd4c5e) */
+  --primary: oklch(0.57 0.135 16);
+  --primary-foreground: oklch(0.99 0.004 16);
 
-  /* SECONDARY: Toned-Down Crimson-Rose Surface & Text */
-  --secondary: oklch(0.955 0.024 16);
-  --secondary-foreground: oklch(0.47 0.175 16);
+  /* SECONDARY: Toned Soft Sage-Green Surface & Deep Pine Text */
+  --secondary: oklch(0.91 0.038 172);
+  --secondary-foreground: oklch(0.32 0.065 174);
 
-  /* BRAND RED: Vivid Crimson-Rose Accent from Banner Slash (#d91e49) */
-  --brand-red: oklch(0.55 0.21 16);
-  --brand-red-foreground: oklch(0.985 0 0);
+  /* BRAND ACCENTS */
+  --brand-red: oklch(0.57 0.135 16);
+  --brand-red-foreground: oklch(0.99 0.004 16);
+  --brand-green: oklch(0.46 0.082 174);
+  --brand-green-foreground: oklch(0.985 0.005 172);
 
-  /* MUTED & ACCENT: Soft sage-tinted neutrals */
-  --muted: oklch(0.962 0.008 175);
-  --muted-foreground: oklch(0.48 0.025 175);
-  --accent: oklch(0.948 0.016 175);
-  --accent-foreground: oklch(0.24 0.04 175);
+  /* MUTED & ACCENT: Soft faded green-gray neutrals */
+  --muted: oklch(0.945 0.016 172);
+  --muted-foreground: oklch(0.46 0.032 174);
+  --accent: oklch(0.925 0.026 172);
+  --accent-foreground: oklch(0.24 0.045 174);
 
-  /* 3D LOGBOOK FOLDER SURFACES */
-  --folder-front: oklch(0.952 0.012 165);
-  --folder-back: oklch(0.875 0.018 155);
-  --folder-label: oklch(0.46 0.04 175);
+  /* 3D LOGBOOK FOLDER SURFACES (LIGHT) */
+  --folder-front: oklch(0.948 0.016 168);
+  --folder-back: oklch(0.885 0.024 168);
+  --folder-label: oklch(0.44 0.042 174);
 
   /* SEMANTIC */
-  --destructive: oklch(0.55 0.21 16);
-  --destructive-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.55 0.16 22);
+  --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.905 0.01 175);
-  --input: oklch(0.905 0.01 175);
-  --ring: oklch(0.48 0.092 176);
+  --border: oklch(0.895 0.020 172);
+  --input: oklch(0.895 0.020 172);
+  --ring: oklch(0.57 0.135 16);
 
   --radius: 0.5rem;
 }
 
 .dark {
-  /* BACKGROUNDS: Deep obsidian-pine dark mode */
-  --background: oklch(0.145 0.012 175);
-  --foreground: oklch(0.975 0.005 175);
+  /* BACKGROUNDS: Soft, Faded Eucalyptus / Sage-Green (Replaces black!) */
+  --background: oklch(0.31 0.042 172);
+  --foreground: oklch(0.965 0.010 172);
 
-  --card: oklch(0.18 0.015 175);
-  --card-foreground: oklch(0.975 0.005 175);
-  --popover: oklch(0.18 0.015 175);
-  --popover-foreground: oklch(0.975 0.005 175);
+  /* CARDS & POPOVERS: Elevated Soft Faded Green */
+  --card: oklch(0.35 0.045 172);
+  --card-foreground: oklch(0.965 0.010 172);
+  --popover: oklch(0.34 0.045 172);
+  --popover-foreground: oklch(0.965 0.010 172);
 
-  /* PRIMARY: Luminous Toned Teal-Green for Dark Mode Contrast */
-  --primary: oklch(0.62 0.105 174);
-  --primary-foreground: oklch(0.13 0.015 175);
+  /* PRIMARY: Faded Soft Red / Pastel Rose-Coral (#d66475) */
+  --primary: oklch(0.65 0.132 16);
+  --primary-foreground: oklch(0.99 0.004 16);
 
-  /* SECONDARY: Muted Crimson-Rose Surface in Dark Mode */
-  --secondary: oklch(0.25 0.055 16);
-  --secondary-foreground: oklch(0.88 0.09 16);
+  /* SECONDARY: Toned Sage-Green Pill Surface & Mint-Cream Text */
+  --secondary: oklch(0.43 0.062 172);
+  --secondary-foreground: oklch(0.95 0.020 172);
 
-  /* BRAND RED: Balanced Crimson-Rose Accent */
-  --brand-red: oklch(0.60 0.20 16);
-  --brand-red-foreground: oklch(0.985 0 0);
+  /* BRAND ACCENTS */
+  --brand-red: oklch(0.65 0.132 16);
+  --brand-red-foreground: oklch(0.99 0.004 16);
+  --brand-green: oklch(0.52 0.085 172);
+  --brand-green-foreground: oklch(0.98 0.008 172);
 
-  --muted: oklch(0.23 0.016 175);
-  --muted-foreground: oklch(0.70 0.02 175);
-  --accent: oklch(0.25 0.025 175);
-  --accent-foreground: oklch(0.975 0.005 175);
+  /* MUTED & ACCENT: Harmonized soft green layers */
+  --muted: oklch(0.38 0.044 172);
+  --muted-foreground: oklch(0.83 0.026 172);
+  --accent: oklch(0.40 0.052 172);
+  --accent-foreground: oklch(0.97 0.010 172);
 
-  /* 3D LOGBOOK FOLDER SURFACES (DARK) */
-  --folder-front: oklch(0.205 0.016 175);
-  --folder-back: oklch(0.255 0.018 175);
-  --folder-label: oklch(0.72 0.03 175);
+  /* 3D LOGBOOK FOLDER SURFACES (SOFT FADED GREEN) */
+  --folder-front: oklch(0.36 0.046 172);
+  --folder-back: oklch(0.42 0.050 172);
+  --folder-label: oklch(0.85 0.028 172);
 
-  --destructive: oklch(0.52 0.18 16);
-  --destructive-foreground: oklch(0.985 0 0);
+  /* SEMANTIC */
+  --destructive: oklch(0.62 0.15 22);
+  --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.265 0.018 175);
-  --input: oklch(0.265 0.018 175);
-  --ring: oklch(0.62 0.105 174);
+  --border: oklch(0.43 0.046 172);
+  --input: oklch(0.41 0.046 172);
+  --ring: oklch(0.65 0.132 16);
 }
 
 @theme inline {
@@ -102,6 +109,8 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-brand-red: var(--brand-red);
   --color-brand-red-foreground: var(--brand-red-foreground);
+  --color-brand-green: var(--brand-green);
+  --color-brand-green-foreground: var(--brand-green-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -130,7 +139,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
+    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden transition-colors duration-300;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight;

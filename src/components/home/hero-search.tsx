@@ -319,7 +319,7 @@ export function HeroSearch({
           type="button"
           onClick={() => handleSearch()}
           aria-label="Search inventory"
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 sm:w-9.5 sm:h-9.5 rounded-lg bg-[#e11d48] hover:bg-[#be123c] hover:scale-105 transition-all text-white shadow-xs cursor-pointer"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 sm:w-9.5 sm:h-9.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground hover:scale-105 transition-all text-white shadow-xs cursor-pointer"
         >
           <Search className="w-4 h-4" />
         </button>
