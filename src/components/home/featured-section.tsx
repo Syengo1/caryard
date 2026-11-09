@@ -66,7 +66,7 @@ export function FeaturedSection({ vehicles }: { vehicles: SearchableVehicle[] })
           </div>
 
           {/* Filter Tabs with Live Counts */}
-          <div className="inline-flex items-center p-1.5 rounded-full bg-muted/70 border border-border/70 overflow-x-auto max-w-full self-start lg:self-auto">
+          <div className="inline-flex items-center p-1.5 rounded-full bg-muted/70 border border-border/70 overflow-x-auto max-w-full self-start lg:self-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id
               return (

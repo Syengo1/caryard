@@ -55,8 +55,8 @@ export function VehicleCard({
   }, [])
 
   const isInView = useInView(cardRef, {
-    amount: 0.6,
-    margin: "-8% 0px -8% 0px",
+    amount: 0.55,
+    margin: "-6% 0px -6% 0px",
   })
 
   const activeVariant = isTouchDevice
@@ -132,13 +132,14 @@ export function VehicleCard({
       href={`/vehicles/${vehicle.slug}`}
       onClick={onClick}
       className={cn(
-        "group relative isolate block w-full max-w-[215px] aspect-[200/312] mx-auto select-none focus:outline-none",
+        // Content-driven height: never clips bottom content on narrow viewports or scaled OS fonts
+        "group relative isolate block w-full max-w-[220px] mx-auto select-none focus:outline-none py-1",
         isElevated ? "z-30" : "z-10"
       )}
     >
       <motion.div
         ref={cardRef}
-        className="relative h-full w-full cursor-pointer select-none"
+        className="relative w-full cursor-pointer select-none"
         onMouseEnter={() => {
           if (!isTouchDevice) setIsHovered(true)
         }}
@@ -151,9 +152,13 @@ export function VehicleCard({
         initial="default"
         animate={activeVariant}
       >
-        {/* 3D Folder Stage */}
+        {/* 
+          3D Folder Stage:
+          Relative w-[89%] lets Layer 1 naturally dictate the exact height of the card,
+          while reserving 11% right-side clearance for Layer 2's 3D fan-out.
+        */}
         <div
-          className="absolute left-0 top-[2%] h-[95%] w-[89%] overflow-visible"
+          className="relative w-[89%] overflow-visible"
           style={{
             perspective: "1500px",
             transformStyle: "preserve-3d",
@@ -161,9 +166,10 @@ export function VehicleCard({
         >
           {/* =========================================================
               LAYER 1: FRONT FOLDER COVER - z-index: 4
+              Drives the natural height of the stage so the price is NEVER clipped
           ========================================================= */}
           <motion.div
-            className="relative z-[4] flex h-full w-full flex-none flex-col justify-between overflow-clip rounded-[8px] bg-folder-front p-2.5 sm:p-3 will-change-transform border border-border/80 shadow-sm"
+            className="relative z-[4] flex w-full flex-col justify-between overflow-hidden rounded-[8px] bg-folder-front p-2.5 sm:p-3 will-change-transform border border-border/80 shadow-sm"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "0% 100% 0px",
@@ -204,7 +210,7 @@ export function VehicleCard({
                   </span>
                 )}
                 <span
-                  className={`inline-flex items-center gap-0.5 rounded-[3px] px-1.5 py-0.5 text-[7.5px] font-bold uppercase tracking-tight ${statusBadge.color}`}
+                  className={`inline-flex items-center gap-0.5 rounded-[3px] px-1.5 py-0.5 text-[7.5px] font-bold uppercase leading-none tracking-tight ${statusBadge.color}`}
                 >
                   {vehicle.inventory_status === "in_stock" ? (
                     <CheckCircle2 className="h-2 w-2" />
@@ -216,8 +222,8 @@ export function VehicleCard({
               </div>
             </div>
 
-            {/* 2. COVER IMAGE BLOCK */}
-            <div className="relative mt-1.5 h-[37%] w-full shrink-0 overflow-hidden rounded-[6px] bg-folder-back/70 border border-border/50">
+            {/* 2. COVER IMAGE BLOCK (Proportional aspect-[16/10] across all viewports) */}
+            <div className="relative mt-1.5 aspect-[16/10] w-full shrink-0 overflow-hidden rounded-[6px] bg-folder-back/70 border border-border/50">
               {coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -237,13 +243,13 @@ export function VehicleCard({
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-7 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
 
               {vehicle.condition && (
-                <span className="absolute bottom-1 left-1 rounded-[3px] bg-black/70 px-1.5 py-0.5 text-[7.5px] font-semibold capitalize tracking-tight text-white">
+                <span className="absolute bottom-1 left-1 rounded-[3px] bg-black/70 px-1.5 py-0.5 text-[7.5px] font-semibold capitalize leading-none tracking-tight text-white">
                   {formatCondition(vehicle.condition)}
                 </span>
               )}
 
               {vehicle.showroom_city && (
-                <span className="absolute bottom-1 right-1 inline-flex items-center gap-0.5 rounded-[3px] bg-white/95 px-1 py-0.5 text-[7.5px] font-bold tracking-tight text-zinc-900">
+                <span className="absolute bottom-1 right-1 inline-flex items-center gap-0.5 rounded-[3px] bg-white/95 px-1 py-0.5 text-[7.5px] font-bold leading-none tracking-tight text-zinc-900">
                   <MapPin className="h-2 w-2 text-brand-red" />
                   {vehicle.showroom_city}
                 </span>
@@ -251,10 +257,10 @@ export function VehicleCard({
             </div>
 
             {/* 3. UNIFORM DETAILS & SPECS SECTION */}
-            <div className="mt-1.5 flex w-full flex-1 flex-col justify-between min-h-0">
+            <div className="mt-2 flex w-full flex-col justify-between">
               <div className="shrink-0">
-                <div className="flex items-center justify-between text-[9px] font-bold tracking-[-0.02em] text-folder-label">
-                  <span className="truncate">
+                <div className="flex items-center justify-between text-[9px] font-bold leading-none tracking-[-0.02em] text-folder-label">
+                  <span className="truncate pr-1">
                     {vehicle.year} {"\u00B7"} {vehicle.make_name || "Vehicle"}
                   </span>
                   {vehicle.stock_number && (
@@ -264,17 +270,20 @@ export function VehicleCard({
                   )}
                 </div>
 
-                {/* Vehicle Headline in Toned-Down Primary Green */}
+                {/* 
+                  EM-LOCKED 2-LINE HEIGHT (h-[2.4em] with leading-[1.2]):
+                  Scales automatically with mobile OS font settings while keeping 1-line and 2-line cards 100% uniform.
+                */}
                 <h3
                   title={displayTitle}
-                  className="mt-0.5 h-[30px] sm:h-[32px] line-clamp-2 text-[12px] sm:text-[13px] font-bold leading-[15px] sm:leading-[16px] tracking-[-0.03em] text-primary"
+                  className="mt-1 h-[2.4em] line-clamp-2 overflow-hidden text-[12px] sm:text-[13px] font-bold leading-[1.2] tracking-[-0.03em] text-primary"
                 >
                   {displayTitle}
                 </h3>
               </div>
 
               {/* Compact 2x2 Specs Grid */}
-              <div className="my-1 shrink-0 grid grid-cols-2 gap-x-1.5 gap-y-1 rounded-[5px] bg-card/85 px-1.5 py-1.5 text-[8.5px] sm:text-[9px] font-semibold tracking-[-0.01em] text-foreground border border-border/50">
+              <div className="my-1.5 shrink-0 grid grid-cols-2 gap-x-1.5 gap-y-1 rounded-[5px] bg-card/90 px-1.5 py-1.5 text-[8.5px] sm:text-[9px] font-semibold leading-tight tracking-[-0.01em] text-foreground border border-border/50">
                 <div className="flex items-center gap-1 truncate">
                   <Gauge className="h-2.5 w-2.5 shrink-0 text-primary" />
                   <span className="truncate">{formatMileageShort(vehicle.mileage_km)}</span>
@@ -311,19 +320,19 @@ export function VehicleCard({
                 </div>
               </div>
 
-              {/* 4. BOTTOM PRICE FOOTER */}
-              <div className="flex w-full shrink-0 items-end justify-between border-t border-border/70 pt-1">
-                <div className="min-w-0 pr-1">
+              {/* 4. BOTTOM PRICE FOOTER (Guaranteed full visibility on all viewports) */}
+              <div className="flex w-full shrink-0 items-end justify-between gap-1 border-t border-border/70 pt-1.5 pb-0.5">
+                <div className="min-w-0 flex-1">
                   <p className="text-[7px] font-bold uppercase leading-none tracking-wider text-folder-label">
                     Price
                   </p>
-                  <p className="mt-0.5 text-[12px] sm:text-[13px] font-extrabold leading-none tracking-[-0.03em] text-foreground truncate">
+                  <p className="mt-1 text-[11.5px] sm:text-[13px] font-extrabold leading-tight tracking-[-0.03em] text-foreground truncate">
                     {formatPriceKES(vehicle.price_kes)}
                   </p>
                 </div>
 
                 {vehicle.is_negotiable ? (
-                  <span className="shrink-0 rounded-[3px] bg-secondary px-1 py-0.5 text-[7px] font-bold uppercase leading-none tracking-tight text-secondary-foreground">
+                  <span className="shrink-0 rounded-[3px] bg-secondary px-1.5 py-0.5 text-[7px] font-bold uppercase leading-none tracking-tight text-secondary-foreground">
                     Nego
                   </span>
                 ) : (
@@ -337,7 +346,7 @@ export function VehicleCard({
               LAYER 2: INNER VEHICLE PHOTO INSERT CARD - z-index: 3
           ========================================================= */}
           <motion.div
-            className="absolute left-[4.6%] top-[7.7%] z-[3] flex h-[84.6%] w-[90.8%] flex-col items-end justify-center overflow-hidden rounded-[8px] bg-zinc-900 border-2 border-white dark:border-zinc-700 shadow-md"
+            className="absolute left-[4.6%] top-[7.5%] z-[3] flex h-[85%] w-[90.8%] flex-col items-end justify-center overflow-hidden rounded-[8px] bg-zinc-900 border-2 border-white dark:border-zinc-700 shadow-md"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "0% 100% 0px",
@@ -389,7 +398,7 @@ export function VehicleCard({
               LAYER 3: BACK FOLDER PAGE - z-index: 2
           ========================================================= */}
           <motion.div
-            className="absolute left-0 top-0 z-[2] flex h-full w-full flex-col items-start justify-center rounded-[8px] bg-folder-back p-3 border border-border/50"
+            className="absolute inset-0 z-[2] flex h-full w-full flex-col items-start justify-center rounded-[8px] bg-folder-back p-3 border border-border/50"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "0% 100% 0px",
@@ -401,7 +410,7 @@ export function VehicleCard({
             }}
             transition={SPRING_TRANSITION}
           >
-            <div className="flex h-full w-full flex-row items-center justify-center overflow-clip">
+            <div className="flex h-full w-full flex-row items-center justify-center overflow-hidden">
               <p className="flex-1 text-justify text-[9.5px] font-semibold leading-[1.2em] tracking-[-0.04em] text-folder-label/75">
                 {backText}
               </p>
