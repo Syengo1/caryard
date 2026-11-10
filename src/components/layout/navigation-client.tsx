@@ -52,7 +52,8 @@ export function TopNavUI({ staff }: NavProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background transition-colors duration-200">
       <div className="container relative flex h-16 items-center justify-between mx-auto max-w-7xl px-4 md:px-8">
-        {/* Left Side: Brand / Logo */}
+        
+        {/* Left Side: Logo */}
         <div className="flex items-center z-10">
           <Link
             href={isAdminRoute ? "/admin" : "/"}
@@ -62,45 +63,55 @@ export function TopNavUI({ staff }: NavProps) {
               <CarFront className="w-5 h-5" />
               <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-brand-red ring-2 ring-background" />
             </div>
-            <span className="font-heading font-extrabold text-xl tracking-tight hidden sm:inline-block">
+            {/* Desktop Brand Text (Hidden on mobile because it moves to the center) */}
+            <span className="font-heading font-extrabold text-xl tracking-tight hidden md:inline-block">
               Mota<span className="text-primary">Motors</span>
             </span>
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation Links Inside a Soft Tinted Pill Track */}
-        <nav className="hidden md:flex items-center gap-1.5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 rounded-full bg-muted/70 border border-border/70 p-1">
-          {links.map((link) => {
-            const isActive =
-              link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)
-            return (
-              <Link key={link.name} href={link.href}>
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    "h-9 px-4 rounded-full transition-all duration-200",
-                    isActive
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold shadow-xs"
-                      : "text-muted-foreground hover:text-primary hover:bg-primary/10 font-medium"
-                  )}
-                >
-                  <link.icon
+        {/* Center Section: Company Name (Mobile) OR Nav Links (Desktop) */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 flex items-center justify-center pointer-events-none md:pointer-events-auto">
+          
+          {/* Mobile-only Centered Brand Name */}
+          <Link href={isAdminRoute ? "/admin" : "/"} className="md:hidden pointer-events-auto">
+            <span className="font-heading font-extrabold text-[1.35rem] tracking-tight">
+              Mota<span className="text-primary">Motors</span>
+            </span>
+          </Link>
+
+          {/* Desktop-only Centered Navigation Links Inside a Soft Tinted Pill Track */}
+          <nav className="hidden md:flex items-center gap-1.5 rounded-full bg-muted/70 border border-border/70 p-1 pointer-events-auto">
+            {links.map((link) => {
+              const isActive =
+                link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)
+              return (
+                <Link key={link.name} href={link.href}>
+                  <Button
+                    variant="ghost"
                     className={cn(
-                      "w-4 h-4 mr-1.5",
-                      isActive ? "text-primary-foreground" : "text-primary/80"
+                      "h-9 px-4 rounded-full transition-all duration-200",
+                      isActive
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold shadow-xs"
+                        : "text-muted-foreground hover:text-primary hover:bg-primary/10 font-medium"
                     )}
-                  />
-                  {link.name}
-                </Button>
-              </Link>
-            )
-          })}
-        </nav>
+                  >
+                    <link.icon
+                      className={cn(
+                        "w-4 h-4 mr-1.5",
+                        isActive ? "text-primary-foreground" : "text-primary/80"
+                      )}
+                    />
+                    {link.name}
+                  </Button>
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-2.5 z-10">
-          <ThemeToggle />
-
           {staff ? (
             isAdminRoute ? (
               <>
@@ -126,7 +137,12 @@ export function TopNavUI({ staff }: NavProps) {
               </>
             ) : (
               <Link href="/admin">
-                <Button className="rounded-full shadow-xs font-semibold h-9 px-4 bg-brand-red hover:bg-brand-red/90 text-brand-red-foreground">
+                {/* On mobile, show just the dashboard icon to save space next to the centered logo */}
+                <Button size="icon" className="md:hidden rounded-full shadow-xs bg-brand-red hover:bg-brand-red/90 text-brand-red-foreground w-9 h-9">
+                  <LayoutDashboard className="w-4 h-4" />
+                </Button>
+                {/* On desktop, show the full button */}
+                <Button className="hidden md:flex rounded-full shadow-xs font-semibold h-9 px-4 bg-brand-red hover:bg-brand-red/90 text-brand-red-foreground">
                   <LayoutDashboard className="w-4 h-4 mr-1.5" />
                   Dashboard
                 </Button>
@@ -145,6 +161,8 @@ export function TopNavUI({ staff }: NavProps) {
               </Link>
             </div>
           )}
+          
+          <ThemeToggle />
         </div>
       </div>
     </header>
