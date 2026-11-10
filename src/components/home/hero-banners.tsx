@@ -42,7 +42,7 @@ const SLIDES: BannerSlide[] = [
       "Secure Payment.",
     ],
     bgGradient: "from-[#1e5c52] via-[#24695e] to-[#174941]",
-    ribbonColor: "#c85a6b",
+    ribbonColor: "#e11d48",
     accentText: "text-primary",
     imageUrl:
       "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1200&auto=format&fit=crop",
@@ -63,7 +63,7 @@ const SLIDES: BannerSlide[] = [
       "Duty-Paid Delivery.",
     ],
     bgGradient: "from-[#1b5249] via-[#216156] to-[#154039]",
-    ribbonColor: "#b84d5e",
+    ribbonColor: "#e11d48",
     accentText: "text-primary",
     imageUrl:
       "https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=1200&auto=format&fit=crop",
@@ -84,7 +84,7 @@ const SLIDES: BannerSlide[] = [
       "Drive Home Today.",
     ],
     bgGradient: "from-[#225e55] via-[#286b61] to-[#194740]",
-    ribbonColor: "#c85a6b",
+    ribbonColor: "#e11d48",
     accentText: "text-primary",
     imageUrl:
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop",
